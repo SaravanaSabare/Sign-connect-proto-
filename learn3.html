@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>हिंदी साइन लैंग्वेज क्विज - Sign Connect</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f4f8;
+        }
+        .container {
+            padding: 50px;
+            text-align: center;
+        }
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+        }
+        .difficulty-buttons button, .quiz-options button {
+            background-color: #3498db;
+            color: white;
+            padding: 15px 30px;
+            margin: 10px;
+            font-size: 18px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .difficulty-buttons button:hover, .quiz-options button:hover {
+            background-color: #2980b9;
+        }
+        .score-board {
+            margin-top: 20px;
+            font-size: 1.5rem;
+        }
+        .question {
+            margin-top: 30px;
+            font-size: 1.2rem;
+        }
+        .options {
+            margin-top: 20px;
+        }
+        .quiz-options {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .score-highlight {
+            animation: pulse 0.5s ease;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>हिंदी साइन लैंग्वेज क्विज</h1>
+        <p>आसान, मध्यम या कठिन स्तर चुनें या सीखने के लिए 'Learn' बटन दबाएं:</p>
+        <div class="difficulty-buttons">
+            <button onclick="startQuiz('easy')">आसान</button>
+            <button onclick="startQuiz('medium')">मध्यम</button>
+            <button onclick="startQuiz('hard')">कठिन</button>
+            <button onclick="goToLearn()">सीखें</button>
+        </div>
+        <div class="score-board">
+            स्कोर: <span id="score">0</span>
+        </div>
+        <div id="quiz-container" class="quiz-container"></div>
+    </div>
+
+    <script>
+        let score = 0;
+        const questions = {
+            easy: [
+                { question: "'नमस्ते' का साइन कैसे करें?", options: ["हाथ जोड़कर", "हाथ हिलाकर", "मुंह की ओर इशारा करके", "सिर पर थपथपाकर"], correct: 0 },
+                { question: "'धन्यवाद' का साइन कैसे करें?", options: ["गाल पर हाथ लगाकर बाहर की ओर हिलाना", "सिर हिलाना", "ताली बजाना", "हाथ ऊपर उठाना"], correct: 0 },
+                { question: "'माफ़ करें' का साइन किस हाथ से होता है?", options: ["हाथों को मोड़कर", "छाती पर हाथ रखकर", "सिर हिलाना", "कान की ओर इशारा करना"], correct: 1 },
+                { question: "'हां' का साइन क्या है?", options: ["सिर हिलाना", "हाथों का इधर-उधर करना", "हाथ हिलाना", "ताली बजाना"], correct: 0 },
+                { question: "'अलविदा' का साइन कैसे करते हैं?", options: ["हाथ हिलाना", "छाती पर मारना", "ताली बजाना", "उंगली से इशारा करना"], correct: 0 }
+            ],
+            medium: [
+                { question: "'दोस्त' का साइन क्या है?", options: ["मुस्कुराते हुए उंगलियों को मिलाना", "कंधे पर हाथ रखना", "हाथ हिलाना", "हाथों को मिलाकर जोड़ना"], correct: 0 },
+                { question: "'क' अक्षर का साइन क्या है?", options: ["हाथों को नीचे मोड़कर", "मुड़ी हुई उंगली के साथ", "मूवमेंट दिखाना", "फैलाकर उंगली"], correct: 1 },
+                { question: "'माँ' का साइन?", options: ["गाल पर उंगली", "हाथों को जोड़ना", "ऊपरी हाथ दिखाना", "माथे पर हाथ लगाना"], correct: 0 },
+                { question: "'सहायता' का साइन क्या है?", options: ["उंगली उठाना", "कंधे पर झुकना", "हाथों को जोड़ना", "सिर हिलाना"], correct: 0 },
+                { question: "'कृपया' का साइन?", options: ["छाती पर हाथ धीरे से लगाना", "गाल पर उंगली से इशारा", "हाथ हिलाना", "होंठों पर छूना"], correct: 0 }
+            ],
+            hard: [
+                { question: "'धन्यवाद' का साइन कैसे करते हैं?", options: ["गाल पर हाथ लगाकर बाहर की ओर हिलाना", "माथे पर हाथ रखना", "दिल की ओर इशारा", "दोनों हाथों को हिलाना"], correct: 0 },
+                { question: "'परिवार' का साइन क्या है?", options: ["हाथों को गोल घुमाना", "गाल पर हाथ", "हाथ मिलाना", "दूसरे की ओर उंगली उठाना"], correct: 0 },
+                { question: "'पापा' का साइन?", options: ["माथे पर उंगली", "हाथ हिलाना", "उंगली दिखाना", "हाथों को जोड़ना"], correct: 0 },
+                { question: "'स्कूल' के लिए साइन कैसे करें?", options: ["हाथ मिलाकर ताली बजाना", "कान पर हाथ मलना", "पुस्तक दिखाना", "सिर हिलाना"], correct: 0 },
+                { question: "'सीखना' का साइन?", options: ["माथे पर उंगली दिखाना", "उंगली ऊपर उठाना", "ताली बजाना", "हाथ हिलाना"], correct: 0 }
+            ]
+        };
+
+        function startQuiz(difficulty) {
+            const quizContainer = document.getElementById('quiz-container');
+            quizContainer.innerHTML = '';  // Clear previous quiz content
+            let currentQuestionIndex = 0;
+            score = 0;
+
+            function showQuestion() {
+                if (currentQuestionIndex < questions[difficulty].length) {
+                    const questionObj = questions[difficulty][currentQuestionIndex];
+                    const questionHtml = `
+                        <div class="question">${questionObj.question}</div>
+                        <div class="quiz-options">
+                            ${questionObj.options.map((option, index) => 
+                                `<button onclick="checkAnswer(${index})">${option}</button>`
+                            ).join('')}
+                        </div>
+                    `;
+                    quizContainer.innerHTML = questionHtml;
+                } else {
+                    quizContainer.innerHTML = `<h2>क्विज समाप्त!</h2><p>आपका अंतिम स्कोर ${score} है।</p>`;
+                }
+            }
+
+            function checkAnswer(selectedOption) {
+                const questionObj = questions[difficulty][currentQuestionIndex];
+                if (selectedOption === questionObj.correct) {
+                    score += 10;
+                    document.getElementById('score').textContent = score;
+                }
+                currentQuestionIndex++;
+                showQuestion();
+            }
+
+            showQuestion();
+            window.checkAnswer = checkAnswer;  // Make it accessible globally
+        }
+
+        function goToLearn() {
+            window.location.href = 'learn-hindi.html'; // Replace with the actual learning resource URL
+        }
+    </script>
+
+</body>
+</html>

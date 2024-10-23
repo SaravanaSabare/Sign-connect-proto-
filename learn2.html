@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="ta">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>தமிழ் வினாடி வினா - Sign Connect</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f4f8;
+        }
+        .container {
+            padding: 50px;
+            text-align: center;
+        }
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+        }
+        .difficulty-buttons button, .quiz-options button {
+            background-color: #3498db;
+            color: white;
+            padding: 15px 30px;
+            margin: 10px;
+            font-size: 18px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .difficulty-buttons button:hover, .quiz-options button:hover {
+            background-color: #2980b9;
+        }
+        .score-board {
+            margin-top: 20px;
+            font-size: 1.5rem;
+        }
+        .question {
+            margin-top: 30px;
+            font-size: 1.2rem;
+        }
+        .options {
+            margin-top: 20px;
+        }
+        .quiz-options {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .score-highlight {
+            animation: pulse 0.5s ease;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>தமிழ் சைகை மொழி வினாடி வினா</h1>
+        <p>எளிய, மிதமான அல்லது கடினமான நிலையைத் தேர்ந்தெடுக்கவும் அல்லது கற்க 'Learn' பொத்தானை அழுத்தவும்:</p>
+        <div class="difficulty-buttons">
+            <button onclick="startQuiz('easy')">எளிது</button>
+            <button onclick="startQuiz('medium')">மிதமான</button>
+            <button onclick="startQuiz('hard')">கடினம்</button>
+            <button onclick="goToLearn()">கற்க</button>
+        </div>
+        <div class="score-board">
+            மதிப்பெண்: <span id="score">0</span>
+        </div>
+        <div id="quiz-container" class="quiz-container"></div>
+    </div>
+
+    <script>
+        let score = 0;
+        const questions = {
+            easy: [
+                { question: "'வணக்கம்' எனச் சைகை செய்ய என்ன சைகை உபயோகிக்கின்றீர்கள்?", options: ["கைகளை இணைத்து", "கை அசைத்து", "வாயைப் பார்த்து காட்டி", "தலை தட்டுவது"], correct: 0 },
+                { question: "'நன்றி' என்பதற்கு எப்படி சைகை செய்கிறீர்கள்?", options: ["கன்னத்தில் தொடந்து வெளியே கையை நகர்த்தல்", "தலையசைத்தல்", "கைதட்டுதல்", "கையை உயர்த்துதல்"], correct: 0 },
+                { question: "'மன்னிக்கவும்' சைகைக்கு எந்தக் கையைப் பயன்படுத்துகிறீர்கள்?", options: ["கைகளைக் குழைத்து", "மார்பில் தொடுதல்", "தலையசைத்தல்", "காது காட்டுதல்"], correct: 1 },
+                { question: "'ஆம்' என்பதற்கான சைகை என்ன?", options: ["தலையசைத்தல்", "கைகள் இடமாற்றம்", "கை அசைத்தல்", "கைதட்டுதல்"], correct: 0 },
+                { question: "'குட்பை' சைகை செய்வதற்கு என்ன செய்கிறீர்கள்?", options: ["கையை அசைத்தல்", "மார்பில் குத்துதல்", "கைதட்டுதல்", "விரலைக் காட்டுதல்"], correct: 0 }
+            ],
+            medium: [
+                { question: "'நண்பர்' என்பதற்கான சைகை என்ன?", options: ["குட்டிப் புன்னகையுடன் விரல்கள் இணைத்தல்", "தோளில் தொடுதல்", "கை அசைத்தல்", "கைகள் ஒன்றாகக் கட்டுதல்"], correct: 0 },
+                { question: "'க' என்ற எழுத்துக்கான சைகை என்ன?", options: ["கைகளை தாழ்த்திப் பிடித்தல்", "பளிச்சிடும் முட்டியுடன் கை", "உருகு காட்டும் விரல்", "பரந்த விரல்"], correct: 1 },
+                { question: "'அம்மா' என்பதற்கான சைகை?", options: ["கன்னத்தில் ஆளுமையான விரல்", "கைகளைக் கட்டுதல்", "மேல் கையை காட்டுதல்", "நெற்றியில் தொடுதல்"], correct: 0 },
+                { question: "'உதவி' சைகை செய்வதற்கான செயல்?", options: ["உயர்த்திய விரல்", "தோளில் சாய்வு", "கைகளை கூசி சேர்த்தல்", "தலையசைத்தல்"], correct: 0 },
+                { question: "'தயவு செய்து' என்ற சைகை?", options: ["மார்பில் மென்மையாகக் கை சாய்த்தல்", "கன்னத்தில் விரலைக் காட்டுதல்", "கை அசைத்தல்", "உதட்டில் தொடுதல்"], correct: 0 }
+            ],
+            hard: [
+                { question: "'நன்றி' என்ற சைகையை எப்படி செய்கிறீர்கள்?", options: ["கன்னத்தில் தொடுதல் மற்றும் வெளியே கையை நகர்த்தல்", "நெற்றியில் கையை அழுத்துதல்", "மனதைப் பாராட்டும் சைகை", "இரு கைகளையும் அசைத்தல்"], correct: 0 },
+                { question: "'குடும்பம்' என்பதற்கான சைகை என்ன?", options: ["கைகளைக் குத்து வட்டமாகத் திருப்புதல்", "கன்னத்தில் கைகள்", "கைகள் சேர்த்து", "மற்றவரை நோக்கி விரல் காட்டுதல்"], correct: 0 },
+                { question: "'அப்பா' என்பதற்கான சைகை?", options: ["நெற்றியில் ஆளுமையுடன் விரல்", "கையை அசைத்தல்", "விரல்", "கைகளைக் கட்டுதல்"], correct: 0 },
+                { question: "'பள்ளி' சைகைக்கு என்ன செய்கிறீர்கள்?", options: ["கைகளை இணைத்து கைதட்டுதல்", "காதில் கைகளை உரசுதல்", "புத்தகத்தை காட்டுதல்", "தலையசைத்தல்"], correct: 0 },
+                { question: "'கற்றல்' என்பதற்கான சைகை?", options: ["நெற்றியில் விரலைக் காட்டுதல்", "விரலை உயர்த்துதல்", "கைதட்டுதல்", "கையை அசைத்தல்"], correct: 0 }
+            ]
+        };
+
+        function startQuiz(difficulty) {
+            const quizContainer = document.getElementById('quiz-container');
+            quizContainer.innerHTML = '';  // Clear previous quiz content
+            let currentQuestionIndex = 0;
+            score = 0;
+
+            function showQuestion() {
+                if (currentQuestionIndex < questions[difficulty].length) {
+                    const questionObj = questions[difficulty][currentQuestionIndex];
+                    const questionHtml = `
+                        <div class="question">${questionObj.question}</div>
+                        <div class="quiz-options">
+                            ${questionObj.options.map((option, index) => 
+                                `<button onclick="checkAnswer(${index})">${option}</button>`
+                            ).join('')}
+                        </div>
+                    `;
+                    quizContainer.innerHTML = questionHtml;
+                } else {
+                    quizContainer.innerHTML = `<h2>வினாடி வினா முடிவடைந்தது!</h2><p>உங்கள் இறுதி மதிப்பெண் ${score}.</p>`;
+                }
+            }
+
+            function checkAnswer(selectedOption) {
+                const questionObj = questions[difficulty][currentQuestionIndex];
+                if (selectedOption === questionObj.correct) {
+                    score += 10;
+                    document.getElementById('score').textContent = score;
+                }
+                currentQuestionIndex++;
+                showQuestion();
+            }
+
+            showQuestion();
+            window.checkAnswer = checkAnswer;  // Make it accessible globally
+        }
+
+        function goToLearn() {
+            window.location.href = 'learn-tamil.html'; // Replace with the actual learning resource URL
+        }
+    </script>
+
+</body>
+</html>

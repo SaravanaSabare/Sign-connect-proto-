@@ -1,0 +1,127 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Montserrat', sans-serif;
+}
+
+nav {
+    background-color: #333;
+    padding: 1rem;
+    text-align: center;
+}
+
+nav ul {
+    list-style: none;
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+}
+
+nav ul li a {
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.section {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.home {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;  /* Aligns content to the right */
+    align-items: flex-end;        /* Centers content vertically */
+    height: 100vh;              /* Full height of the viewport */
+    background-image: url('./bulb.jpg');
+    background-size: cover;
+    background-position: center;
+    padding-right: 20px; 
+}
+.home h1, .home p {
+    display: block;
+    margin: 0;
+    padding: 0;
+    text-align: right; 
+   /* Align text content to the right */
+    opacity: 0;        /* Initial state is hidden */
+    transform: translateX(50px); /* Aligns text to the right */
+}
+
+/* Spacing between elements */
+.home h1 {
+    margin-bottom: 10px;  /* Space between heading and paragraph */
+    animation: slideIn 1.5s ease-out forwards;
+}
+
+.home p {
+    margin-bottom: 15px;  /* Space below paragraph */
+    animation: slideIn 2s ease-out forwards;
+}
+@keyframes slideIn {
+    to {
+        opacity: 1;          /* Fade-in */
+        transform: translateX(0); /* Slide to its original position */
+    }
+    
+}
+
+
+.about {
+    background-color: #EDE8DC;
+    background-size: cover;
+    background-position: center;
+    flex-direction: column;
+    color:#0e0808 ;
+    opacity: 0;                 /* Initial state is hidden */
+    transition: opacity 2s ease-out;
+}
+/* Apply animation to h1 and button */
+.about.active {
+    opacity: 1;                 /* Fully visible when active */
+}
+
+/* Button styling */
+.about button {
+    margin-top: 20px;          /* Space between heading and button */
+}
+
+.about h1 {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+.about button {
+    background-color: #E7CCCC;
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    cursor: pointer;
+    border-radius: 5px;
+    animation-delay: 1s;
+}
+@keyframes fadeIn {
+    to {
+        opacity: 1;  /* End state: fully visible */
+    }
+}
+
+footer {
+    background-color: #333;
+    color: white;
+    padding: 1rem;
+    text-align: center;
+}
+
+footer p {
+    margin: 0;
+}

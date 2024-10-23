@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>English Quiz - Sign Connect</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f4f8;
+        }
+        .container {
+            padding: 50px;
+            text-align: center;
+        }
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+        }
+        .difficulty-buttons button, .quiz-options button {
+            background-color: #3498db;
+            color: white;
+            padding: 15px 30px;
+            margin: 10px;
+            font-size: 18px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .difficulty-buttons button:hover, .quiz-options button:hover {
+            background-color: #2980b9;
+        }
+        .score-board {
+            margin-top: 20px;
+            font-size: 1.5rem;
+        }
+        .question {
+            margin-top: 30px;
+            font-size: 1.2rem;
+        }
+        .options {
+            margin-top: 20px;
+        }
+        .quiz-options {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .score-highlight {
+            animation: pulse 0.5s ease;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>English Quiz</h1>
+        <p>Select the difficulty level to start or click Learn to study:</p>
+        <div class="difficulty-buttons">
+            <button onclick="startQuiz('easy')">Easy</button>
+            <button onclick="startQuiz('medium')">Medium</button>
+            <button onclick="startQuiz('hard')">Hard</button>
+            <button onclick="goToLearn()">Learn</button>
+        </div>
+        <div class="score-board">
+            Score: <span id="score">0</span>
+        </div>
+        <div id="quiz-container" class="quiz-container"></div>
+    </div>
+
+    <script>
+        let score = 0;
+        const questions = {
+            easy: [
+                { question: "What is the sign for 'Hello'?", options: ["Waving hand", "Tapping the head", "Pointing to the mouth", "Clapping"], correct: 0 },
+                { question: "Which hand is used to sign the letter 'A'?", options: ["Left hand", "Right hand", "Either hand", "Both hands"], correct: 2 },
+                { question: "What does the sign for 'Thank you' involve?", options: ["Touching your chin and moving outward", "Touching your chest", "Clapping your hands", "Pointing your finger"], correct: 0 },
+                { question: "What is the sign for 'Yes'?", options: ["Nodding", "Shaking your head", "Waving your hand", "Pointing to your mouth"], correct: 0 },
+                { question: "How do you sign 'Goodbye'?", options: ["Waving", "Tapping your chin", "Clapping", "Pointing"], correct: 0 }
+            ],
+            medium: [
+                { question: "Which sign represents 'Friend'?", options: ["Linking two fingers", "Touching the shoulder", "Waving", "Clapping hands"], correct: 0 },
+                { question: "How do you sign the letter 'B'?", options: ["Making a fist", "Hand flat with fingers together", "Pointing index finger", "Hand flat with fingers apart"], correct: 1 },
+                { question: "Which hand gesture represents 'Love' in sign language?", options: ["Crossing arms over your chest", "Pointing upwards", "Touching your nose", "Linking pinky fingers"], correct: 0 },
+                { question: "What is the sign for 'Please'?", options: ["Rubbing your chest with a flat hand", "Touching your lips", "Nodding your head", "Waving your hand"], correct: 0 },
+                { question: "How do you sign 'Help'?", options: ["Closed fist in hand", "Flat hand", "Finger pointed upwards", "Both hands touching the chest"], correct: 0 }
+            ],
+            hard: [
+                { question: "How do you sign 'I love you'?", options: ["Pointing at yourself, crossing arms over chest, and pointing at the person", "Linking fingers", "Pointing upwards", "Shaking both hands"], correct: 0 },
+                { question: "How do you sign 'Mother'?", options: ["Touching your chin with your thumb", "Touching your forehead with your thumb", "Pointing at your nose", "Crossing arms over chest"], correct: 0 },
+                { question: "What is the sign for 'Happy'?", options: ["Rubbing your chest with both hands", "Tapping your shoulder", "Shaking your hands", "Pointing your fingers to the sky"], correct: 0 },
+                { question: "Which sign represents 'Family'?", options: ["Circling your hands around an imaginary space", "Touching your nose", "Crossing your fingers", "Pointing at your chest"], correct: 0 },
+                { question: "How do you sign 'School'?", options: ["Clapping your hands together", "Tapping your forehead", "Shaking your hands", "Pointing at a book"], correct: 0 }
+            ]
+        };
+
+        function startQuiz(difficulty) {
+            const quizContainer = document.getElementById('quiz-container');
+            quizContainer.innerHTML = '';  // Clear previous quiz content
+            let currentQuestionIndex = 0;
+            score = 0;
+
+            function showQuestion() {
+                if (currentQuestionIndex < questions[difficulty].length) {
+                    const questionObj = questions[difficulty][currentQuestionIndex];
+                    const questionHtml = `
+                        <div class="question">${questionObj.question}</div>
+                        <div class="quiz-options">
+                            ${questionObj.options.map((option, index) => 
+                                `<button onclick="checkAnswer(${index})">${option}</button>`
+                            ).join('')}
+                        </div>
+                    `;
+                    quizContainer.innerHTML = questionHtml;
+                } else {
+                    quizContainer.innerHTML = `<h2>Quiz Finished!</h2><p>Your final score is ${score}.</p>`;
+                }
+            }
+
+            function checkAnswer(selectedOption) {
+                const questionObj = questions[difficulty][currentQuestionIndex];
+                if (selectedOption === questionObj.correct) {
+                    score += 10;
+                    document.getElementById('score').textContent = score;
+                }
+                currentQuestionIndex++;
+                showQuestion();
+            }
+
+            showQuestion();
+            window.checkAnswer = checkAnswer;  // Make it accessible globally
+        }
+
+        function goToLearn() {
+            window.location.href = 'learn-english.html'; // Replace with the actual learning resource URL
+        }
+    </script>
+
+</body>
+</html>

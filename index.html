@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Website</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav>
+        <ul>
+            <li><a href="#home">Home</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#footer">Contact</a></li>
+            <li><a href="signin.html">Sign In</a></li>
+        </ul>
+    </nav>
+
+    <!-- Home Section -->
+    <div id="home" class="section home">
+        <h1>Sign-Connect</h1>
+        <p>Learn Sign Language in your own regional languages!</p>
+    </div>
+
+    <!-- About Section -->
+    <div id="about" class="section about">
+        <h1>Join us in our journey</h1>
+        <button onclick="window.location.href='signin.html'">Sign In</button>
+    </div>
+   
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>Contact us at: example@domain.com | Phone: +123 456 789</p>
+    </footer>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const aboutSection = document.querySelector('.about');
+        
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        aboutSection.classList.add('active'); // Add class when in view
+                    }
+                });
+            });
+        
+            observer.observe(aboutSection); // Observe the About section
+        });
+        </script>
+</body>
+</html>
